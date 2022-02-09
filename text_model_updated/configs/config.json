@@ -1,0 +1,25 @@
+{
+    "TrainingArgs": {
+        "output_dir": "/gpfs/scratch/bsc31/bsc31282/test_trainer", 
+        "evaluation_strategy": "epoch",
+        "num_train_epochs": 5,
+        "per_device_train_batch_size": 6,
+        "per_device_eval_batch_size": 6,
+        "learning_rate": 3e-5,
+        "weight_decay": 0.01,
+        "warmup_steps": 25,
+        "adam_epsilon": 1e-8,
+        "fp16": false,
+        "dataloader_num_workers": 4,
+        "logging_strategy": "no",
+        "save_strategy": "no",
+        "report_to": "none",
+        "disable_tqdm": false
+    },
+    "num_gpus": 1,
+    "layerwise_learning_rate_decay": 0,
+    "learning_rate_head": 1e-6,
+    "use_bertadam": true,
+    "model_name": "bert-base-uncased",
+    "path_hdf5": "/gpfs/scratch/bsc31/bsc31991/HDF5_files"
+}
