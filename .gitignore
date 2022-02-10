@@ -16,7 +16,8 @@ runs/*
 Notebooks/*
 README_v1.md
 
-text_model_updated/cache
+text_model_updated/cache/*/
+text_model_updated/cache/*.lock
 
 # C extensions
 *.so
