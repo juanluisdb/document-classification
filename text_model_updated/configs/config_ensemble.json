@@ -1,0 +1,9 @@
+{
+    "num_classes": 10,
+    "batch_size": 4, 
+    "text_model_name": "bert-base-uncased",
+    "eff_model": "b1",
+    "path_bert_base": "/gpfs/scratch/bsc31/bsc31282/test_trainer_3",
+    "eff_path": "/gpfs/scratch/bsc31/bsc31275/image_models/paper_experiments/finetuning_BT",
+    "path_hdf5": "/gpfs/scratch/bsc31/bsc31991/HDF5_files"
+}

@@ -7,6 +7,7 @@ import pickle
 import re
 import numpy as np
 from tqdm import trange
+from PIL import Image
 
 import h5py
 
@@ -31,15 +32,19 @@ class H5Dataset(Dataset):
     @param (torch.device) device: 'cpu' or 'gpu', decides where to store the data tensors
 
     """
-    def __init__(self, path, tokenizer, phase):
+    def __init__(self, path, tokenizer, phase, use_img=False, img_transforms=None):
         super(H5Dataset).__init__()
         print('dataset init')
         self.file_path = path
         self.dataset = None
-        self.data = None
+        self.img = None
         self.target = None
         self.ocr = None
         self.phase = phase
+        self.img_transforms = img_transforms
+        self.use_img = use_img
+        self.tokenizer = tokenizer
+
         with h5py.File(self.file_path, 'r') as file:
             if phase == 'train':
                 self.dataset_len = len(file["train_ocrs"])
@@ -49,17 +54,18 @@ class H5Dataset(Dataset):
                 self.dataset_len = len(file["test_ocrs"])
 
 
-
-        self.tokenizer = tokenizer
-
-
     def pre_tokenize_and_encode_examples(self,example):
 
         example = re.sub(r'<br />', '', example)
         example = example.lstrip().rstrip()
         example = re.sub(' +', ' ', example)
         
-        return self.tokenizer(example, padding="max_length", truncation=True)
+        return self.tokenizer(
+            example, 
+            padding="max_length", 
+            truncation=True,
+            return_tensors='pt'
+            )
 
 
     def __len__(self):
@@ -71,17 +77,20 @@ class H5Dataset(Dataset):
             if self.phase == 'train':
                 self.dataset = h5py.File(self.file_path, 'r')
                 #print('File readed')
-                #self.data = self.dataset.get('train_img')
+                if self.use_img:
+                    self.img = self.dataset.get('train_img')
                 self.target = self.dataset.get('train_labels')
                 self.ocr = self.dataset.get('train_ocrs')
             elif self.phase == 'val':
                 self.dataset = h5py.File(self.file_path, 'r')
-                #self.data = self.dataset.get('val_img')
+                if self.use_img:
+                    self.img = self.dataset.get('val_img')
                 self.target = self.dataset.get('val_labels')
                 self.ocr = self.dataset.get('val_ocrs')
             elif self.phase == 'test':
                 self.dataset = h5py.File(self.file_path, 'r')
-                #self.data = self.dataset.get('test_img')
+                if self.use_img:
+                    self.img = self.dataset.get('test_img')
                 self.target = self.dataset.get('test_labels')
                 self.ocr = self.dataset.get('test_ocrs')
 
@@ -94,6 +103,14 @@ class H5Dataset(Dataset):
             ocr_text = 'empty'
 
         example = self.pre_tokenize_and_encode_examples(ocr_text)
+        for i in example:
+            example[i] = example[i].squeeze()
         example['label'] = label
+
+        if self.use_img:
+            img = self.img[idx,:,:,:]
+            img = Image.fromarray(img.astype('uint8'), 'RGB')
+            img = self.img_transforms(img)
+            example['img'] = img
 
         return example
