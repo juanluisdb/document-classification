@@ -49,3 +49,8 @@ BigTobacco files can be downloaded [here](http://www.cs.cmu.edu/~aharley/rvl-cdi
 _efficientnet_pytorch_ library downloads the models in .cache/torch/checkpoints.
 
 _pytorch_transformers_ library does it in .cache/torch/pytorch_transformers. Make sure you previously download and store in those paths the models if your machine has no internet access.
+
+
+### 2022 Update
+
+```text_model_updated``` folder contains an updated version of ```text_model``` folder. It uses Transformers v4.10 and the Trainer API.
